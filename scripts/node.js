@@ -1,5 +1,3 @@
-// const Trie = require ("./trie")
-// const text       = "/usr/share/dict/words"
 class Node {
   constructor(data){
     this.data = data;
@@ -8,7 +6,6 @@ class Node {
     this.value = '';
   }
 }
-
 
 export default Node;
 
