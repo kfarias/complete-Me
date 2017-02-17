@@ -1,179 +1,91 @@
 import Node from './node.js';
 
+
 class Trie {
   constructor() {
     this.root = new Node('');
     this.length = 0;
+    this.suggestions = [];
+    this.suggestionsObj = {};
   }
 
   count() {
-    return this.legth;
+    return this.length;
+    //let current = this.root
+    //
+    //check if words have a property of is word
+    // if(current.isWord){
+    // 
+    // }
+    //return this.length;
+  }
+
+  populate(array) {
+    array.forEach((word) => {
+      this.insert(word);
+    });
   }
 
   insert(word) {
     let wordArray = word.split('');
     let current = this.root;
-    wordArray.forEach((letter, index) => {
-      if(current.children[letter]) {
-         current = current.children[letter];
-      }
+
+    wordArray.forEach(letter => {
+
+      if (current.children[letter]) {
+        current = current.children[letter];
+      } else {
         current.children[letter] = new Node(letter);
-        current = current.children[letter]
-    })
+        current = current.children[letter];
+      }
+    });
+
     current.isWord = true;
     this.length++;
   }
+
   suggest(string) {
+    let letterArray = string.split('');
     let current = this.root;
-    let strArray = string.split('');
-    strArray.forEach((letter, index) => {
-      if(current.children[letter]) {
-        current = current.children[letter]
+
+    for (let i = 0; i < letterArray.length; i++) {
+      if (current.children[letterArray[i]]) {
+        current = current.children[letterArray[i]];
+
       } else {
+
         return null;
       }
-      // words(current, string);
-    })
+    }
+    this.words(current, string);
+  }
+
+  words(current, string) {
+    if (current.isWord) {
+      this.suggestions.push(string);
+    }
+
+    let nodekeys = Object.keys(current.children);
+
+    nodekeys.forEach(letter => {
+      let nextNode = current.children[letter];
+      this.words(nextNode, string + letter);
+    });
+    return this.suggestions;
+  }
+
+  select(substring, suggestion){
+    let currentIndex = this.suggestions.indexOf(suggestion);
+    let targetWord = this.suggestions.splice(currentIndex,1);
+
+    this.suggestions.unshift(targetWord[0]);
+    this.suggestionsObj[substring] = this.suggestions;
   }
 }
 
+
+
+
+
+
 export default Trie;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// export default class Trie {
-//   constructor() {
-//   this.root = new Node('');
-// }
-//
-// add(node, word) {
-//   if(!this.root) {
-//     return null;
-//   }
-//   this.addNode(this.root, word);
-// }
-//
-// addNode(node, word) {
-//   if(!node || !word) {
-//     return null;
-//   }
-//   node.prefixes++;
-//   let letter = word.charAt(0);
-//   let child = node.children[letter];
-//   if(!child) {
-//     child = new Node(letter);
-//     node.children[letter] = child;
-//   }
-//   let remainder = word.substring(1);
-//   if(!remainder) {
-//   child.isWord = true;
-// }
-// this.addNode(child,remainder);
-// }
-//
-// suggest(node, word) {
-//   if(!this.root) {
-//     return false;
-//   }
-//   return this.contains(this.root, word);
-// }
-//
-// contains(node, word) {
-//   if(!node || !word){
-//   return false;
-// }
-// let letter = word.charAt(0);
-// let child = node.children[letter];
-// if(child) {
-//   let remainder = word.substring(1);
-//   if(!remainer && child.isWord) {
-//     return true;
-//   } else {
-//     return this.contains(child, remainder);
-//   }
-// } else {
-//   return false;
-// }
-// }
-//
-// count(node) {
-//   if(!this.root) {
-//     return console.log('No root node found');
-//   }
-//   let chain = [this.root];
-//   let counter = 0;
-//   while(chain.length) {
-//     var node = chain.shift();
-//     if(node.isWord) {
-//       counter++;
-//     }
-//     for(let child in node.children) {
-//       if(node.children.hasOwnProperty(child)) {
-//         chain.push(node.children[child]);
-//       }
-//     }
-//   }
-//   return counter;
-//   }
-// }
